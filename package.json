@@ -1,0 +1,22 @@
+{
+  "name": "genetic-algorithm",
+  "version": "1.0.0",
+  "description": "Final project in CPE231 KMUTT.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./dist/index.js",
+    "build": "tsc & tsc-alias",
+    "dev": "tsc & tsc-alias & node ./dist/index.js"
+  },
+  "author": "PPHamster",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.10",
+    "tsc-alias": "^1.8.0",
+    "tsconfig-paths": "^4.1.1",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  }
+}
