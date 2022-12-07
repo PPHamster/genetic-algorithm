@@ -1,18 +1,23 @@
 import { Constance, Generation, Population } from "@packages/type";
+import { FileService } from "@services/FileService";
 import { GeneticService } from "@services/GeneticService";
+import fs from 'fs'
+import path from 'path'
 
 export class GeneticAlgorithm {
   private readonly geneticService: GeneticService;
+  private readonly fileService: FileService;
 
   private readonly distance: number[][];
   private readonly demand: number[][];
-  private constance: Constance;
+  private readonly constance: Constance;
 
   private populations: Population[];
   private generations: Generation[];
 
   constructor(distance: number[][], demand: number[][], constance: Constance) {
     this.geneticService = new GeneticService();
+    this.fileService = new FileService('logs');
 
     this.distance = distance;
     this.demand = demand;
@@ -23,7 +28,7 @@ export class GeneticAlgorithm {
   }
 
   // Define first generation by shuffle index 1 - customer count
-  public initalizePath(): void {
+  private initalizePath(): void {
     let defaultPath = this.geneticService.createDefaultPath(1, this.constance.CUSTOMER_COUNT);
     for (let i = 0; i < this.constance.POPULATION_SIZE; i++) {
       defaultPath = this.geneticService.shuffle(defaultPath);
@@ -32,7 +37,7 @@ export class GeneticAlgorithm {
   }
 
   // Calculate and fill fitness ratio, CDF, distance for previous path
-  public evaluate(): void {
+  private evaluate(): void {
     let allDistanceSum = 0, minDistance = Number.MAX_VALUE;
     let minPath: number[] = [], minVehicleRun: number[] = [];
 
@@ -107,7 +112,7 @@ export class GeneticAlgorithm {
   }
 
   // Create new all of population path
-  public reproduction(): void {
+  private reproduction(): void {
     const nextPopulations: Population[] = [];
 
     // Loop each population
@@ -143,13 +148,18 @@ export class GeneticAlgorithm {
     // Initialization process
     this.initalizePath();
 
+    const startTime = new Date().getTime();
     let round: number;
     let canStop = false;
     let noChangeCount = 0;
 
+    // Write log file into log.txt
+    this.fileService.setFileName("log.txt");
+
     for (round = 0; round < this.constance.TERMINAL_CRITERIA && !canStop; round++) {
       // Calculate fitness ratio, CDF, distance for record into current generation
       this.evaluate();
+      this.fileService.writePopulationAndGeneration(this.populations, this.generations[round], round);
 
       // If not first round and min distance from each generation not change many time
       if (round !== 0 && this.generations[round].minDistance === this.generations[round - 1].minDistance) {
@@ -161,8 +171,14 @@ export class GeneticAlgorithm {
       }
       
       // The last round not necessary to reproduction
-      if (round !== this.constance.TERMINAL_CRITERIA - 1) this.reproduction();
+      if (round !== this.constance.TERMINAL_CRITERIA - 1 && !canStop) this.reproduction();
     }
+
+    const timeUse = (new Date().getTime() - startTime) / 1000;
+
+    // Write result file into result.txt
+    this.fileService.setFileName("result.txt");
+    this.fileService.writeAllGentation(this.generations, timeUse);
 
     console.log(`Use ${round} rounds`);
     console.log(`The last generation is`);
