@@ -23,6 +23,10 @@ export class FileService {
     }
   }
 
+  private haveFolderAndFile(): boolean {
+    return this.folder !== "" && this.file !== "";
+  }
+
   public setFileName(file: string): void {
     this.file = file;
     fs.writeFileSync(path.join(this.folder, this.file), "", { flag: 'w' });
@@ -33,7 +37,7 @@ export class FileService {
     generation: Generation,
     indexGeneration: number,
   ): void {
-    if (this.folder === "" || this.file === "") throw Error("Not folder or file name to write.");
+    if (!this.haveFolderAndFile()) throw Error("Not folder or file name to write.");
 
     let log = `Generation: ${indexGeneration + 1}\n`;
 
@@ -52,8 +56,8 @@ export class FileService {
     
   }
 
-  public writeAllGentation(generations: Generation[], timeUse: number): void {
-    if (this.folder === "" || this.file === "") throw Error("Not folder or file name to write.");
+  public writeAllGeneration(generations: Generation[], timeUse: number): void {
+    if (!this.haveFolderAndFile()) throw Error("Not folder or file name to write.");
 
     let log = `No,\tAverageDistance,\tMinDistance,\tVehicleCount\n`;
     log += `------------------------------------------------\n`;

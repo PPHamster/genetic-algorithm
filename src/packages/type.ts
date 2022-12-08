@@ -1,4 +1,4 @@
-export type Constance = {
+export type Constant = {
   POPULATION_SIZE: number,
   CUSTOMER_COUNT: number,
   MAX_DISTANCE: number,
