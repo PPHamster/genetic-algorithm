@@ -59,14 +59,26 @@ export class FileService {
   public writeAllGeneration(generations: Generation[], timeUse: number): void {
     if (!this.haveFolderAndFile()) throw Error("Not folder or file name to write.");
 
-    let log = `No,\tAverageDistance,\tMinDistance,\tVehicleCount\n`;
+    let log = `No,\tAverageDistance,\tMinDistance,\tMaxDistance,\tVehicleCount\n`;
     log += `------------------------------------------------\n`;
 
     for (let i = 0; i < generations.length; i++) {
-      log += `${i},\t${generations[i].average.toFixed(2)},\t${generations[i].minDistance},\t[${generations[i].vehicleRun.join(' -> ')}]\n`;
+      log += `${i + 1},\t${generations[i].average.toFixed(2)},\t${generations[i].minDistance},\t${generations[i].maxDistance},\t[${generations[i].vehicleRun.join(' -> ')}]\n`;
     }
 
     log += `Time use : ${timeUse.toFixed(4)} second\n`;
+    fs.writeFileSync(path.join(this.folder, this.file), log, { flag: 'a+' });
+  }
+
+  public writeFileGraph(generations: Generation[]): void {
+    if (!this.haveFolderAndFile()) throw Error("Not folder or file name to write.");
+
+    let log = "Average,Min,Max\n";
+
+    for (let i = 0; i < generations.length; i++) {
+      log += `${generations[i].average},${generations[i].minDistance},${generations[i].maxDistance}\n`;
+    }
+
     fs.writeFileSync(path.join(this.folder, this.file), log, { flag: 'a+' });
   }
 

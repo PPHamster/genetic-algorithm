@@ -36,10 +36,11 @@ export class GeneticService {
   public createGeneration(
     minPath: number[],
     minDistance: number,
+    maxDistance: number,
     average: number,
     vehicleRun: number[],
   ): Generation {
-    return { minPath: [...minPath], minDistance, average, vehicleRun: [...vehicleRun] };
+    return { minPath: [...minPath], minDistance, maxDistance, average, vehicleRun: [...vehicleRun] };
   }
 
   // Random number between two value

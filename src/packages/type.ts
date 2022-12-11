@@ -21,6 +21,7 @@ export type Population = {
 export type Generation = {
   minPath: number[],
   minDistance: number,
+  maxDistance: number,
   average: number,
   vehicleRun: number[],
 }

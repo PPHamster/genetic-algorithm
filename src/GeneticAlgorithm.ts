@@ -36,7 +36,7 @@ export class GeneticAlgorithm {
 
   // Calculate and fill fitness ratio, CDF, distance for previous path
   private evaluate(): void {
-    let allDistanceSum = 0, minDistance = Number.MAX_VALUE;
+    let allDistanceSum = 0, minDistance = Number.MAX_VALUE, maxDistance = 0;
     let minPath: number[] = [], minVehicleRun: number[] = [];
 
     // Loop for find all sum of distance using specified distance and demand
@@ -77,6 +77,12 @@ export class GeneticAlgorithm {
         minPath = [...this.populations[i].path];
         minVehicleRun = [...vehicleRun];
       }
+
+      // Record max distance
+      if (distanceSum > maxDistance) {
+        maxDistance = distanceSum;
+      }
+
     }
 
     // Find fitness ratio
@@ -104,6 +110,7 @@ export class GeneticAlgorithm {
     this.generations.push(this.geneticService.createGeneration(
       minPath,
       minDistance,
+      maxDistance,
       average,
       minVehicleRun,
     ));
@@ -178,6 +185,9 @@ export class GeneticAlgorithm {
     this.fileService.setFileName("result.txt");
     this.fileService.writeAllGeneration(this.generations, timeUse);
 
+    this.fileService.setFileName("graph.csv");
+    this.fileService.writeFileGraph(this.generations);
+    
     console.log(`Use ${round} rounds`);
     console.log(`The last generation is`);
     console.log(this.generations[this.generations.length - 1]);
